@@ -40,6 +40,32 @@ want to see.
 See `docs/ACCESS_CONTROL.md` — the segregation model, its threat model, and its
 known gaps.
 
+## Running it
+
+```sh
+python -m venv .venv && .venv/Scripts/pip install -e ".[dev]"
+
+# Ingest the sample corpus (three synthetic matters; embeds locally)
+python -m private_rag ingest data/sample
+
+# Query as a user — every query is identity-bound and audited
+python -m private_rag query "crane inspection findings" --user alice
+python -m private_rag query "escrow release condition" --user alice   # walled: nothing responsive
+python -m private_rag query "escrow release condition" --user bob
+
+# Deletion that means it
+python -m private_rag forget ATLAS-LTR-001
+python -m private_rag close-matter atlas-escrow
+
+python -m private_rag audit
+pytest   # includes the segregation suite; runs fully offline
+```
+
+Retrieval, segregation, deletion, and audit are implemented and tested. The
+local *generation* layer (Ollama/vLLM per `docs/DEPLOYMENT.md`) is the next
+stage and is not yet wired — what exists today retrieves and cites; it does
+not draft answers.
+
 ## Limitations
 
 See `docs/LIMITATIONS.md`.
