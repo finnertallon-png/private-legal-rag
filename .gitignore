@@ -49,3 +49,6 @@ tmp/
 # Runtime artifacts
 store.db
 audit.jsonl
+
+# Build artifacts
+*.egg-info/
