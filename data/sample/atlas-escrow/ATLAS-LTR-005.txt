@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: atlas-escrow
+DOC: ATLAS-LTR-005
+DATE: 2026-02-01
+TITLE: Escrow release objection
+
+Re: Atlas Partners / Northgate Holdings escrow dispute
+
+Northgate Holdings objects to release of the indemnity escrow, asserting that the release condition designated Project Nightjar was not satisfied before the release notice was issued.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

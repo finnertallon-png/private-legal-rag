@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: atlas-escrow
+DOC: ATLAS-MEM-006
+DATE: 2026-03-12
+TITLE: Memo on release conditions
+
+Re: Atlas Partners / Northgate Holdings escrow dispute
+
+Internal memorandum mapping each escrow release condition in the purchase agreement to its supporting evidence, and identifying the disputed condition.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

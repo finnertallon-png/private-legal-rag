@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: meridian-employment
+DOC: MERIDIAN-AGR-007
+DATE: 2026-02-10
+TITLE: Retention agreement excerpt
+
+Re: Whitfield v. Meridian Analytics Corp.
+
+Excerpt of the retention agreement addressing severance eligibility upon termination without cause, including the computation basis and payment schedule.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

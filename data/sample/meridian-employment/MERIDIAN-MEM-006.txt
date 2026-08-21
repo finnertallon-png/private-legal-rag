@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: meridian-employment
+DOC: MERIDIAN-MEM-006
+DATE: 2026-03-21
+TITLE: Memo on termination timeline
+
+Re: Whitfield v. Meridian Analytics Corp.
+
+Internal memorandum reconstructing the termination timeline from personnel records, including the performance review of 8 March and the decision meeting that followed.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

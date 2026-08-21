@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: atlas-escrow
+DOC: ATLAS-AGR-003
+DATE: 2026-01-26
+TITLE: Escrow agreement excerpt
+
+Re: Atlas Partners / Northgate Holdings escrow dispute
+
+Excerpt of the escrow agreement setting the claim notice deadline, the joint instruction requirement, and the arbiter mechanism for disputed releases.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

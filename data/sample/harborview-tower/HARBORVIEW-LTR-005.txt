@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: harborview-tower
+DOC: HARBORVIEW-LTR-005
+DATE: 2026-02-08
+TITLE: Notice of crane inspection findings
+
+Re: Harborview Tower LLC v. Keystone Structural, Inc.
+
+Counsel writes regarding the tower crane inspection at the Harborview Tower project. The independent rigging survey identified the counterweight assembly serial CW-77413 as out of certification, and demands suspension of lifts pending recertification.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

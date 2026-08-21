@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: harborview-tower
+DOC: HARBORVIEW-RPT-007
+DATE: 2026-02-28
+TITLE: Site observation report
+
+Re: Harborview Tower LLC v. Keystone Structural, Inc.
+
+Field observation report for the Harborview Tower site. Concrete placement on level 8 completed; hoisting operations remained suspended per counsel's direction.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

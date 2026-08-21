@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: meridian-employment
+DOC: MERIDIAN-LTR-005
+DATE: 2026-03-01
+TITLE: Demand letter
+
+Re: Whitfield v. Meridian Analytics Corp.
+
+Counsel for the former employee asserts wrongful termination and demands the severance payment of $418,500 provided under the retention agreement, plus accrued incentive compensation.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

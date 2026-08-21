@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: atlas-escrow
+DOC: ATLAS-MIN-008
+DATE: 2026-02-18
+TITLE: Call notes — escrow agent
+
+Re: Atlas Partners / Northgate Holdings escrow dispute
+
+Notes of the call with the escrow agent regarding the disputed release instruction and the agent's position pending joint direction or an arbiter award.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

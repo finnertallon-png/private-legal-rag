@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: harborview-tower
+DOC: HARBORVIEW-MIN-004
+DATE: 2026-02-21
+TITLE: Meeting minutes — owner/contractor
+
+Re: Harborview Tower LLC v. Keystone Structural, Inc.
+
+Minutes of the weekly owner-contractor meeting. Parties discussed recovery options and reservation of rights regarding the crane stand-down and resulting delay claims.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

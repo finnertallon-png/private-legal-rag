@@ -1,0 +1,8 @@
+{
+  "_comment": "Demo access policy: user -> permitted matter ids. Deny by default; a user absent from this file retrieves nothing. In a deployment this file is replaced by the firm's identity and ethical-wall systems — see src/private_rag/access.py.",
+  "users": {
+    "alice": ["harborview-tower"],
+    "bob": ["meridian-employment", "atlas-escrow"],
+    "priya": ["harborview-tower", "meridian-employment", "atlas-escrow"]
+  }
+}

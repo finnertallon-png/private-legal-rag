@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: harborview-tower
+DOC: HARBORVIEW-MEM-006
+DATE: 2026-02-11
+TITLE: Memo on delay exposure
+
+Re: Harborview Tower LLC v. Keystone Structural, Inc.
+
+Internal memorandum assessing schedule exposure from the crane stand-down. The critical path runs through curtain wall panel lifts; each idle day adds general conditions cost.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.

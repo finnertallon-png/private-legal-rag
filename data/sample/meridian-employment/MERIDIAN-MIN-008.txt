@@ -1,0 +1,11 @@
+SYNTHETIC — GENERATED TEST DATA
+MATTER: meridian-employment
+DOC: MERIDIAN-MIN-008
+DATE: 2026-02-21
+TITLE: Interview notes
+
+Re: Whitfield v. Meridian Analytics Corp.
+
+Notes of interview with the human resources director regarding the separation decision and the approvals obtained before notice was delivered.
+
+This document is synthetic test data generated for a deployment demonstration. It describes no real matter, person, or project.
