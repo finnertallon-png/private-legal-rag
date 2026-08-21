@@ -12,7 +12,11 @@
 
 - **Model capability.** Locally servable models underperform frontier hosted
   models on hard reasoning. Where the gap matters, it is stated rather than
-  papered over.
+  papered over. Measured instance (2026-08-20): the 3B fallback model
+  repeatedly answered a supported question correctly in its answer text
+  while flagging it unsupported with no citations — the mechanical citation
+  verifier and the 8B default exist because of exactly this class of
+  failure. See `DEPLOYMENT.md` for the measurements.
 - **Hardware cost.** Local inference has a real hardware floor. Measured
   requirements are recorded in `DEPLOYMENT.md`.
 - **Maintenance burden.** Self-hosting moves model updates, security patching,

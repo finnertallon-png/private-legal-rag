@@ -59,12 +59,17 @@ python -m private_rag close-matter atlas-escrow
 
 python -m private_rag audit
 pytest   # includes the segregation suite; runs fully offline
+
+# Grounded answers from a local model (requires Ollama + `ollama pull qwen3:8b`)
+python -m private_rag ask "What is the dispute over the escrow release?" --user bob
+python -m private_rag ask "What is the dispute over the escrow release?" --user alice  # walled: honest refusal
 ```
 
-Retrieval, segregation, deletion, and audit are implemented and tested. The
-local *generation* layer (Ollama/vLLM per `docs/DEPLOYMENT.md`) is the next
-stage and is not yet wired — what exists today retrieves and cites; it does
-not draft answers.
+Retrieval, segregation, deletion, audit, and local generation are implemented
+and tested. The model receives only what retrieval returned for the asking
+identity, citations are verified verbatim in code after generation, and an
+identity whose retrieval comes back empty gets a refusal without the model
+being called at all. Measured hardware footprint is in `docs/DEPLOYMENT.md`.
 
 ## Limitations
 

@@ -34,11 +34,14 @@ document usually survives it.
 
 Answered so far (2026-08-20):
 
-**(2) Model weights, partially.** Embeddings are model2vec `potion-base-8M`:
-~30 MB of static token vectors, downloaded once from Hugging Face, cached
-locally, and fully offline afterward — no call leaves the host at query time.
-The generation model is not yet wired (Ollama/vLLM per the stack above); its
-weight provenance will be recorded here when it lands.
+**(2) Model weights.** Embeddings are model2vec `potion-base-8M`: ~30 MB of
+static token vectors, downloaded once from Hugging Face, cached locally, and
+fully offline afterward — no call leaves the host at query time. Generation
+is served by Ollama on localhost; models are pulled from Ollama's registry as
+content-addressed layers verified by sha256 digest (`ollama list` shows the
+digest ids). The pinned demo model is `qwen3:8b` (4-bit quantization);
+`llama3.2:3b` is the low-load fallback, with its capability cost measured and
+recorded below.
 
 **(3) Audit log.** Append-only JSONL, written by the store at its enforcement
 point — a query cannot retrieve without leaving a record of who asked, what
@@ -62,5 +65,24 @@ every document in it.
 
 ## Hardware baseline
 
-Record actual measured requirements here rather than estimates. A firm evaluating
-this needs to know what it costs to run.
+Measured 2026-08-20 on a consumer laptop — deliberately not a server: AMD
+Ryzen 9 8945HS, 16 GB RAM, NVIDIA RTX 4060 Laptop (8 GB VRAM), Windows 11.
+
+- `qwen3:8b` (4-bit): **5.6 GB VRAM**, fully GPU-resident at 4k context.
+  Warm end-to-end `ask` (embed query → retrieve → generate → verify
+  citations): **~5 seconds**. First call after idle pays the model load
+  (~1 minute worst case observed cold); the pipeline sets a 30-minute
+  keep-alive, so a session pays it once.
+- `llama3.2:3b` (4-bit): **2.6 GB VRAM**. Runs comfortably alongside heavy
+  desktop load, but with a measured capability cost: on a question the
+  evidence plainly supported, it repeatedly produced the correct answer text
+  while labeling it `supported: false` with no citations — a schema-
+  discipline failure the 8B model did not exhibit. It is an emergency
+  fallback for constrained machines, not an equivalent choice; treat its
+  refusals as unreliable.
+- The two models do not fit in 8 GB VRAM together; switching models
+  mid-session evicts the loaded one and repays the load time.
+
+The 8 GB-VRAM single-GPU class is therefore a real floor for the 8B demo
+configuration, with roughly 2.5 GB VRAM headroom left for a video call and
+desktop compositing during a live demonstration.
