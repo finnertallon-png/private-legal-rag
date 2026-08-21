@@ -45,3 +45,7 @@ Thumbs.db
 *.log
 scratch/
 tmp/
+
+# Runtime artifacts
+store.db
+audit.jsonl
