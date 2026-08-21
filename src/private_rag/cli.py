@@ -160,16 +160,21 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="private-rag",
         description="Matter-segregated retrieval, entirely local.")
-    parser.add_argument("--db", default=DEFAULT_DB, help="store file")
-    parser.add_argument("--hash-embedder", action="store_true",
+    # Shared flags live on a parent parser so they are valid after the
+    # subcommand too (`ask ... --db x`), which is where people type them.
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--db", default=DEFAULT_DB, help="store file")
+    common.add_argument("--hash-embedder", action="store_true",
                         help="offline test embedder instead of the local model")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p = sub.add_parser("ingest", help="ingest a directory of .txt documents")
+    p = sub.add_parser("ingest", parents=[common],
+                       help="ingest a directory of .txt documents")
     p.add_argument("source")
     p.set_defaults(fn=_cmd_ingest)
 
-    p = sub.add_parser("query", help="search as a user; audited")
+    p = sub.add_parser("query", parents=[common],
+                       help="search as a user; audited")
     p.add_argument("question")
     p.add_argument("--user", required=True)
     p.add_argument("--access", default=DEFAULT_ACCESS)
@@ -177,7 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--k", type=int, default=8)
     p.set_defaults(fn=_cmd_query)
 
-    p = sub.add_parser("ask", help="retrieve as a user, then draft a "
+    p = sub.add_parser("ask", parents=[common],
+                       help="retrieve as a user, then draft a "
                        "grounded answer with the local model; audited")
     p.add_argument("question")
     p.add_argument("--user", required=True)
@@ -189,20 +195,23 @@ def main(argv: list[str] | None = None) -> int:
                         "documented low-load fallback)")
     p.set_defaults(fn=_cmd_ask)
 
-    p = sub.add_parser("forget", help="delete one document and its embeddings")
+    p = sub.add_parser("forget", parents=[common],
+                       help="delete one document and its embeddings")
     p.add_argument("doc_id")
     p.set_defaults(fn=_cmd_forget)
 
-    p = sub.add_parser("close-matter",
+    p = sub.add_parser("close-matter", parents=[common],
                        help="delete every document in a matter")
     p.add_argument("matter_id")
     p.set_defaults(fn=_cmd_close_matter)
 
-    p = sub.add_parser("audit", help="print the audit log")
+    p = sub.add_parser("audit", parents=[common],
+                       help="print the audit log")
     p.add_argument("--audit", default=DEFAULT_AUDIT)
     p.set_defaults(fn=_cmd_audit)
 
-    p = sub.add_parser("stats", help="store contents summary")
+    p = sub.add_parser("stats", parents=[common],
+                       help="store contents summary")
     p.set_defaults(fn=_cmd_stats)
 
     args = parser.parse_args(argv)
