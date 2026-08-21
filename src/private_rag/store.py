@@ -91,7 +91,10 @@ class Hit:
 class Store:
     def __init__(self, path: Path | str, embedder: Embedder,
                  audit: AuditLog | None = None):
-        self._db = sqlite3.connect(str(path))
+        # check_same_thread off because the web UI serves requests from
+        # worker threads; its app layer serializes store access with a
+        # lock. sqlite itself is compiled threadsafe.
+        self._db = sqlite3.connect(str(path), check_same_thread=False)
         self._db.executescript(_SCHEMA)
         self._embedder = embedder
         self._audit = audit
@@ -115,9 +118,19 @@ class Store:
     # -- ingest ------------------------------------------------------------
 
     def add_documents(self, docs: list[Document]) -> int:
-        """Insert documents and their chunks; embeds chunk text locally."""
+        """Insert documents and their chunks; embeds chunk text locally.
+
+        Already-present doc_ids are skipped, so re-ingesting a directory
+        is safe and adds only what is new. Replacing a changed document
+        is an explicit `forget` then re-ingest — an implicit overwrite
+        would silently bypass the deletion discipline.
+        """
+        have = {r[0] for r in
+                self._db.execute("SELECT doc_id FROM documents")}
         added = 0
         for doc in docs:
+            if doc.doc_id in have:
+                continue
             chunks = chunk_document(doc)
             vectors = self._embedder.encode([c.text for c in chunks]) \
                 if chunks else np.empty((0, 1), dtype=np.float32)
@@ -214,6 +227,19 @@ class Store:
         return Chunk(chunk_id=row[0], doc_id=row[1], matter_id=row[2],
                      date=dt.date.fromisoformat(row[3]) if row[3] else None,
                      seq=row[4], text=row[5])
+
+    def documents_for(self, identity: Identity) -> list[dict]:
+        """Documents visible to this identity, same boundary as search."""
+        matters = sorted(identity.matters)
+        if not matters:
+            return []
+        placeholders = ",".join("?" * len(matters))
+        rows = self._db.execute(
+            f"SELECT doc_id, matter_id, title, doc_date FROM documents "
+            f"WHERE matter_id IN ({placeholders}) "
+            f"ORDER BY matter_id, doc_date, doc_id", matters).fetchall()
+        return [{"doc_id": r[0], "matter": r[1], "title": r[2], "date": r[3]}
+                for r in rows]
 
     # -- lifecycle ---------------------------------------------------------
 
