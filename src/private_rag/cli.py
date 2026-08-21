@@ -93,6 +93,40 @@ def _cmd_query(args) -> int:
     return 0
 
 
+def _cmd_ask(args) -> int:
+    from .answer import DEFAULT_MODEL, OllamaAnswerer, answer_from_hits
+
+    policy = AccessPolicy.load(Path(args.access))
+    identity = policy.resolve(args.user)
+    store = Store(args.db, _embedder(args)[0],
+                  audit=AuditLog(Path(args.audit)))
+    hits = store.search(identity, args.question, k=args.k)
+    try:
+        result = answer_from_hits(
+            args.question, hits,
+            OllamaAnswerer(model=args.model or DEFAULT_MODEL))
+    except RuntimeError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps({
+        "user": identity.user,
+        "granted_matters": sorted(identity.matters),
+        "question": args.question,
+        "model": result.model,
+        "supported": result.supported,
+        "answer": result.answer,
+        "citations": [
+            {"doc_id": c.doc_id, "quote": c.quote, "verified": c.verified}
+            for c in result.citations
+        ],
+        "retrieved": [h.chunk.chunk_id for h in hits],
+    }, indent=2, ensure_ascii=False))
+    if result.unverified_citations:
+        print(f"warning: {len(result.unverified_citations)} citation(s) "
+              "failed verbatim verification", file=sys.stderr)
+    return 0
+
+
 def _cmd_forget(args) -> int:
     store = _open_store(args)
     gone = store.delete_document(args.doc_id)
@@ -142,6 +176,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--audit", default=DEFAULT_AUDIT)
     p.add_argument("--k", type=int, default=8)
     p.set_defaults(fn=_cmd_query)
+
+    p = sub.add_parser("ask", help="retrieve as a user, then draft a "
+                       "grounded answer with the local model; audited")
+    p.add_argument("question")
+    p.add_argument("--user", required=True)
+    p.add_argument("--access", default=DEFAULT_ACCESS)
+    p.add_argument("--audit", default=DEFAULT_AUDIT)
+    p.add_argument("--k", type=int, default=8)
+    p.add_argument("--model", default=None,
+                   help="Ollama model (default qwen3:8b; llama3.2:3b is the "
+                        "documented low-load fallback)")
+    p.set_defaults(fn=_cmd_ask)
 
     p = sub.add_parser("forget", help="delete one document and its embeddings")
     p.add_argument("doc_id")
