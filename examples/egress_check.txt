@@ -1,0 +1,10 @@
+﻿ingested 24 documents (embedding model loaded from local cache, HF_HUB_OFFLINE=1)
+query as alice: 'crane inspection certification findings' -> 6 chunks, matters ['harborview-tower']
+  generated (model qwen3:8b): supported=True, citations 2/2 verified
+query as alice: 'escrow release condition Nightjar' -> 6 chunks, matters ['harborview-tower']
+  generated (model qwen3:8b): supported=False, citations 0/0 verified
+query as bob: 'What is the dispute over the escrow release?' -> 6 chunks, matters ['atlas-escrow']
+  generated (model qwen3:8b): supported=True, citations 1/1 verified
+
+full cycle completed with all non-loopback connections blocked at the socket layer; any egress attempt by this process would have raised and aborted this run.
+documents: 24  queries: 3  generated answers: 3  non-loopback attempts: 0

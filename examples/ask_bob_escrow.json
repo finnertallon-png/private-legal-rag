@@ -1,0 +1,28 @@
+﻿{
+  "user": "bob",
+  "granted_matters": [
+    "atlas-escrow",
+    "meridian-employment"
+  ],
+  "question": "What is the dispute over the escrow release?",
+  "model": "qwen3:8b",
+  "supported": true,
+  "answer": "The dispute over the escrow release is that Northgate Holdings objects to the release of the indemnity escrow, asserting that the release condition designated Project Nightjar was not satisfied before the release notice was issued.",
+  "citations": [
+    {
+      "doc_id": "ATLAS-LTR-001",
+      "quote": "Northgate Holdings objects to release of the indemnity escrow, asserting that the release condition designated Project Nightjar was not satisfied before the release notice was issued.",
+      "verified": true
+    }
+  ],
+  "retrieved": [
+    "ATLAS-AGR-003:0",
+    "ATLAS-AGR-007:0",
+    "ATLAS-LTR-001:0",
+    "ATLAS-MIN-004:1",
+    "ATLAS-LTR-005:0",
+    "ATLAS-LTR-001:1",
+    "ATLAS-MIN-008:1",
+    "ATLAS-MEM-002:0"
+  ]
+}

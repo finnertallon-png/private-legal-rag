@@ -1,0 +1,21 @@
+﻿{
+  "user": "alice",
+  "granted_matters": [
+    "harborview-tower"
+  ],
+  "question": "What is the dispute over the escrow release?",
+  "model": "qwen3:8b",
+  "supported": false,
+  "answer": "The accessible record does not show what the dispute is over the escrow release.",
+  "citations": [],
+  "retrieved": [
+    "HARBORVIEW-MIN-004:1",
+    "HARBORVIEW-LTR-001:1",
+    "HARBORVIEW-LTR-005:1",
+    "HARBORVIEW-MIN-008:1",
+    "HARBORVIEW-MEM-006:2",
+    "HARBORVIEW-MEM-002:2",
+    "HARBORVIEW-LTR-005:2",
+    "HARBORVIEW-MEM-002:1"
+  ]
+}

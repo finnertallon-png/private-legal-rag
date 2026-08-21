@@ -34,6 +34,20 @@ document usually survives it.
 
 Answered so far (2026-08-20):
 
+**(1) Network egress evidence.** `python scripts/egress_check.py` runs the
+full ingest-and-query cycle — local embedding (forced to cache with
+`HF_HUB_OFFLINE=1`), identity-bound retrieval for multiple users, and live
+generation against local Ollama — with a socket-level guard active that
+raises on any connection attempt to a non-loopback address. A clean run is
+therefore positive evidence, not absence of a log line; the committed output
+of a real run is `examples/egress_check.txt`, and the same guard runs in the
+test suite (`tests/test_egress.py`, including a control test proving the
+guard actually blocks). Honest scope: the guard covers the pipeline process.
+The Ollama server is a separate localhost process, and DNS resolution goes
+through the OS — an auditor closes both with OS-level controls (a firewall
+rule on the Ollama binary, or an air-gapped host), which is where those
+controls belong in any case.
+
 **(2) Model weights.** Embeddings are model2vec `potion-base-8M`: ~30 MB of
 static token vectors, downloaded once from Hugging Face, cached locally, and
 fully offline afterward — no call leaves the host at query time. Generation
