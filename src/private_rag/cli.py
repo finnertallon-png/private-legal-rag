@@ -149,6 +149,19 @@ def _cmd_audit(args) -> int:
     return 0
 
 
+def _cmd_serve(args) -> int:
+    from .answer import DEFAULT_MODEL
+    from .webui import serve
+
+    if not Path(args.db).exists():
+        print(f"error: no store at {args.db} — run ingest first",
+              file=sys.stderr)
+        return 1
+    serve(Path(args.db), Path(args.access), Path(args.audit), args.port,
+          _embedder(args)[0], model=args.model or DEFAULT_MODEL)
+    return 0
+
+
 def _cmd_stats(args) -> int:
     store = _open_store(args)
     print(json.dumps({**store.stats(),
@@ -209,6 +222,15 @@ def main(argv: list[str] | None = None) -> int:
                        help="print the audit log")
     p.add_argument("--audit", default=DEFAULT_AUDIT)
     p.set_defaults(fn=_cmd_audit)
+
+    p = sub.add_parser("serve", parents=[common],
+                       help="local web UI: identity picker, visible "
+                            "documents, chat over the store")
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--access", default=DEFAULT_ACCESS)
+    p.add_argument("--audit", default=DEFAULT_AUDIT)
+    p.add_argument("--model", default=None)
+    p.set_defaults(fn=_cmd_serve)
 
     p = sub.add_parser("stats", parents=[common],
                        help="store contents summary")

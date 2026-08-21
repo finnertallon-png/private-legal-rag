@@ -63,6 +63,11 @@ pytest   # includes the segregation suite; runs fully offline
 # Grounded answers from a local model (requires Ollama + `ollama pull qwen3:8b`)
 python -m private_rag ask "What is the dispute over the escrow release?" --user bob
 python -m private_rag ask "What is the dispute over the escrow release?" --user alice  # walled: honest refusal
+
+# Local web UI on http://127.0.0.1:8765 — identity picker, the documents
+# that identity can see, and chat over the store. Same enforcement path
+# as the CLI; the picker is the demo stand-in for SSO (see ACCESS_CONTROL).
+python -m private_rag serve
 ```
 
 Retrieval, segregation, deletion, audit, and local generation are implemented

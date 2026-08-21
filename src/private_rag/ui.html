@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Private Legal RAG</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; color: #1c1c1c; background: #f4f4f4;
+    height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    background: #22303f; color: #fff; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  header h1 { font-size: 15px; font-weight: 600; }
+  header .sub { color: #9fb0c0; font-size: 12px; margin-left: 10px; }
+  header label { font-size: 12px; color: #c9d3dc; margin-right: 6px; }
+  header select {
+    font: inherit; padding: 4px 8px; border: 1px solid #4a5a6a;
+    background: #fff; color: #1c1c1c; border-radius: 0;
+  }
+  main { flex: 1; display: flex; min-height: 0; }
+
+  /* Sidebar: documents visible to the selected employee */
+  aside {
+    width: 300px; background: #fff; border-right: 1px solid #ccc;
+    overflow-y: auto; padding: 12px;
+  }
+  aside h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+    color: #555; margin-bottom: 8px;
+  }
+  .matter { margin-bottom: 14px; }
+  .matter h3 {
+    font-size: 12px; font-weight: 600; color: #22303f;
+    border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-bottom: 4px;
+  }
+  .doc { padding: 3px 0 3px 6px; border-left: 2px solid #ddd; margin: 2px 0; }
+  .doc .id { font-family: Consolas, monospace; font-size: 12px; color: #333; }
+  .doc .meta { font-size: 12px; color: #666; }
+  .empty { color: #777; font-size: 13px; padding: 6px 0; }
+
+  /* Chat */
+  #chat { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #messages { flex: 1; overflow-y: auto; padding: 16px; }
+  .msg { max-width: 720px; margin: 0 auto 12px auto; }
+  .msg .who { font-size: 11px; color: #666; margin-bottom: 2px; }
+  .msg .body {
+    background: #fff; border: 1px solid #ccc; padding: 10px 12px;
+  }
+  .msg.user .body { background: #e8ebee; }
+  .msg.error .body { border-color: #b3261e; color: #b3261e; }
+  .refused { color: #555; font-style: italic; }
+  .cites { margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 6px; }
+  .cite { font-size: 12px; margin: 4px 0; padding-left: 8px;
+          border-left: 2px solid #2e6b34; }
+  .cite.bad { border-left-color: #b3261e; }
+  .cite .tag { font-family: Consolas, monospace; font-weight: 600; }
+  .cite .ok { color: #2e6b34; }
+  .cite .no { color: #b3261e; font-weight: 600; }
+  .cite .quote { color: #444; }
+  .pending .body { color: #666; }
+
+  form {
+    border-top: 1px solid #ccc; background: #fff; padding: 10px 16px;
+    display: flex; gap: 8px;
+  }
+  form input {
+    flex: 1; font: inherit; padding: 8px; border: 1px solid #aaa;
+    border-radius: 0;
+  }
+  form button {
+    font: inherit; padding: 8px 18px; border: 1px solid #22303f;
+    background: #22303f; color: #fff; cursor: pointer; border-radius: 0;
+  }
+  form button:disabled { background: #7a8794; border-color: #7a8794; }
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:baseline">
+    <h1>Private Legal RAG</h1>
+    <span class="sub">local retrieval &middot; matter-segregated &middot; citations verified</span>
+  </div>
+  <div>
+    <label for="user">Employee</label>
+    <select id="user"></select>
+  </div>
+</header>
+<main>
+  <aside>
+    <h2>Documents in your matters</h2>
+    <div id="docs"></div>
+  </aside>
+  <section id="chat">
+    <div id="messages"></div>
+    <form id="ask">
+      <input id="question" autocomplete="off"
+             placeholder="Ask about the record&hellip;">
+      <button id="send" type="submit">Ask</button>
+    </form>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let busy = false;
+
+async function loadUsers() {
+  const data = await (await fetch("/api/users")).json();
+  $("user").innerHTML = data.users
+    .map((u) => `<option value="${u}">${u}</option>`).join("");
+  await switchUser();
+}
+
+async function switchUser() {
+  $("messages").innerHTML = "";
+  const user = $("user").value;
+  const data = await (await fetch(
+    `/api/documents?user=${encodeURIComponent(user)}`)).json();
+  if (!data.documents.length) {
+    $("docs").innerHTML = `<div class="empty">No matters granted.</div>`;
+    return;
+  }
+  const byMatter = {};
+  for (const d of data.documents) (byMatter[d.matter] ??= []).push(d);
+  $("docs").innerHTML = Object.entries(byMatter).map(([m, docs]) => `
+    <div class="matter"><h3>${m} (${docs.length})</h3>
+      ${docs.map((d) => `<div class="doc">
+        <div class="id">${d.doc_id}</div>
+        <div class="meta">${d.date ?? ""} &middot; ${d.title}</div>
+      </div>`).join("")}
+    </div>`).join("");
+}
+
+function addMsg(cls, who, html) {
+  const div = document.createElement("div");
+  div.className = `msg ${cls}`;
+  div.innerHTML = `<div class="who">${who}</div><div class="body">${html}</div>`;
+  $("messages").appendChild(div);
+  $("messages").scrollTop = $("messages").scrollHeight;
+  return div;
+}
+
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+$("ask").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const question = $("question").value.trim();
+  if (!question || busy) return;
+  busy = true; $("send").disabled = true;
+  const user = $("user").value;
+  addMsg("user", user, esc(question));
+  $("question").value = "";
+  const pending = addMsg("pending", "assistant", "Retrieving and drafting&hellip;");
+  try {
+    const resp = await fetch("/api/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user, question }),
+    });
+    const data = await resp.json();
+    pending.remove();
+    if (!resp.ok) {
+      addMsg("error", "error", esc(data.error ?? "request failed"));
+    } else {
+      const cites = data.citations.map((c) => `
+        <div class="cite ${c.verified ? "" : "bad"}">
+          <span class="tag">${c.doc_id}</span>
+          ${c.verified ? `<span class="ok">verified</span>`
+                       : `<span class="no">NOT verified</span>`}
+          <div class="quote">&ldquo;${esc(c.quote)}&rdquo;</div>
+        </div>`).join("");
+      addMsg("", `assistant &middot; ${data.model ?? "no model call"}`,
+        `<div class="${data.supported ? "" : "refused"}">${esc(data.answer)}</div>` +
+        (cites ? `<div class="cites">${cites}</div>` : ""));
+    }
+  } catch (err) {
+    pending.remove();
+    addMsg("error", "error", esc(String(err)));
+  } finally {
+    busy = false; $("send").disabled = false; $("question").focus();
+  }
+});
+
+$("user").addEventListener("change", switchUser);
+loadUsers();
+</script>
+</body>
+</html>
